@@ -6,7 +6,7 @@ export default defineConfig({
   base: process.env.NODE_ENV === 'production' ? '/birbwatching/' : '/',
   
   server: {
-    port: 3000,
+    port: 3001,
     open: true,
   },
   build: {

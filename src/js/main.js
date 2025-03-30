@@ -1,4 +1,6 @@
 // Main JavaScript file
+import { initThreeJsScene } from './bird3d.js';
+
 document.addEventListener('DOMContentLoaded', () => {
   console.log('BirdWatching website loaded');
   
@@ -18,4 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
       heroSection.style.opacity = '1';
     }, 200);
   }
+
+  // Initialize Three.js scene
+  initThreeJsScene();
 }); 
