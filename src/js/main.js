@@ -1,7 +1,7 @@
 // Main JavaScript file
 import { initThreeJsScene } from './bird3d.js';
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
   console.log('BirdWatching website loaded');
   
   // Example of dynamically updating the copyright year
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   try {
     // Initialize Three.js scene
-    await initThreeJsScene();
+    initThreeJsScene();
   } catch (error) {
     console.error('Error initializing 3D scene:', error);
   }

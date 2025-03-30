@@ -44,3 +44,4 @@ logs
 
 # Coverage directory used by tools like istanbul
 coverage/ 
+web-dev-rules.md

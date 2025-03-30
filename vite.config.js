@@ -8,7 +8,7 @@ export default defineConfig({
   
   resolve: {
     alias: {
-      'three': resolve(__dirname, 'node_modules/three/build/three.module.js')
+      'three': resolve(__dirname, 'node_modules/three')
     }
   },
   
@@ -25,6 +25,10 @@ export default defineConfig({
           three: ['three']
         }
       }
+    },
+    commonjsOptions: {
+      include: [/node_modules/],
+      transformMixedEsModules: true
     }
   }
 }); 
