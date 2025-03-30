@@ -1,5 +1,5 @@
 // Main JavaScript file
-import { initThreeJsScene } from './bird3d.js';
+import { initThreeJsScene } from './heartBirb3d.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('BirdWatching website loaded');
