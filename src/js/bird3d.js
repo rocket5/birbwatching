@@ -129,8 +129,17 @@ export function initThreeJsScene() {
 
   // Load the HeartBirb model
   const loader = new GLTFLoader();
+  
+  // Get the base URL from the import.meta if in development,
+  // or use the configured base path if in production
+  const baseUrl = import.meta.env?.DEV ? '' : import.meta.env?.BASE_URL || '/birbwatching/';
+  
+  // Path to model in public directory
+  const modelPath = `${baseUrl}assets/models/HeartBirb.glb`;
+  console.log('Loading model from:', modelPath);
+  
   loader.load(
-    './assets/models/HeartBirb.glb',
+    modelPath,
     (gltf) => {
       heartBirb = gltf.scene;
       
@@ -162,6 +171,27 @@ export function initThreeJsScene() {
     },
     (error) => {
       console.error('Error loading model:', error);
+      console.error('Model path attempted:', modelPath);
+      
+      // Fall back to a basic shape if model loading fails
+      const geometry = new THREE.SphereGeometry(1, 32, 32);
+      const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
+      const sphere = new THREE.Mesh(geometry, material);
+      scene.add(sphere);
+      
+      // Add text to indicate loading failure
+      const message = document.createElement('div');
+      message.style.position = 'absolute';
+      message.style.top = '10px';
+      message.style.left = '50%';
+      message.style.transform = 'translateX(-50%)';
+      message.style.background = 'rgba(255,0,0,0.7)';
+      message.style.color = 'white';
+      message.style.padding = '10px';
+      message.style.borderRadius = '5px';
+      message.style.zIndex = '1000';
+      message.textContent = `Failed to load 3D bird model from: ${modelPath}`;
+      document.body.appendChild(message);
     }
   );
 
