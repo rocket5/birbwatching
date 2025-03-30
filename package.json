@@ -1,0 +1,23 @@
+{
+  "name": "birbwatching",
+  "version": "1.0.0",
+  "description": "A website for bird watching enthusiasts",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "birds",
+    "birdwatching",
+    "nature"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+} 
