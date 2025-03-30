@@ -31,6 +31,29 @@ npm run dev
 npm run build
 ```
 
+## Deployment
+
+This project is set up to automatically deploy to GitHub Pages using GitHub Actions when changes are pushed to the main branch.
+
+### Automatic Deployment
+
+When you push to the main branch, the GitHub Actions workflow will:
+1. Check out the code
+2. Set up Node.js
+3. Install dependencies
+4. Build the website
+5. Deploy to the `gh-pages` branch
+
+The site will be available at: `https://<username>.github.io/birbwatching/`
+
+### Manual Deployment
+
+If needed, you can also deploy manually using the included script:
+
+```bash
+./deploy.sh
+```
+
 ## Project Structure
 
 ```
@@ -42,8 +65,12 @@ birbwatching/
 │   │   └── images/    # Image files
 │   ├── css/           # CSS files
 │   └── js/            # JavaScript files
+├── .github/           # GitHub configuration
+│   └── workflows/     # GitHub Actions workflows
 ├── index.html         # Main HTML file
 ├── package.json       # Project configuration
+├── vite.config.js     # Vite configuration
+├── deploy.sh          # Manual deployment script
 ├── .gitignore         # Git ignore file
 └── .gitattributes     # Git LFS configuration
 ```
