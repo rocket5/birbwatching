@@ -1,7 +1,11 @@
-import * as THREE from 'three';
+// Try dynamic import for Three.js to ensure it works in production
+let THREE;
 
 // Function to initialize a Three.js scene
-export function initThreeJsScene() {
+export async function initThreeJsScene() {
+  // Dynamically import Three.js
+  THREE = await import('three');
+  
   // Create a container for the 3D scene
   const container = document.createElement('div');
   container.style.position = 'absolute';

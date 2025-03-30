@@ -8,7 +8,7 @@ export default defineConfig({
   
   resolve: {
     alias: {
-      'three': resolve(__dirname, 'node_modules/three')
+      'three': resolve(__dirname, 'node_modules/three/build/three.module.js')
     }
   },
   
@@ -19,5 +19,12 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     minify: 'terser',
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          three: ['three']
+        }
+      }
+    }
   }
 }); 
