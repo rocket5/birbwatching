@@ -5,7 +5,7 @@ A website dedicated to bird watching enthusiasts, providing information about bi
 ## Project Setup
 
 ### Prerequisites
-- Node.js (v14 or later)
+- Node.js (v20 or later)
 - Git with Git LFS
 
 ### Installation
@@ -39,20 +39,32 @@ This project is set up to automatically deploy to GitHub Pages using GitHub Acti
 
 When you push to the main branch, the GitHub Actions workflow will:
 1. Check out the code
-2. Set up Node.js
+2. Set up Node.js v20
 3. Install dependencies
-4. Build the website
-5. Deploy to the `gh-pages` branch
+4. Build the website using Vite
+5. Upload build artifacts
+6. Deploy to GitHub Pages
 
 The site will be available at: `https://<username>.github.io/birbwatching/`
 
 ### Manual Deployment
 
-If needed, you can also deploy manually using the included script:
+If needed, you can also deploy manually using:
 
 ```bash
-./deploy.sh
+npm run build
+# Then deploy the dist folder to your server
 ```
+
+## Build Configuration
+
+### Vite Configuration
+- Base path set for GitHub Pages: `/birbwatching/`
+- Development server runs on port 3001
+- Production builds:
+  - Output directory: `dist`
+  - Minification: Terser
+  - Manual code chunking for Three.js
 
 ## Project Structure
 
@@ -66,11 +78,10 @@ birbwatching/
 │   ├── css/           # CSS files
 │   └── js/            # JavaScript files
 ├── .github/           # GitHub configuration
-│   └── workflows/     # GitHub Actions workflows
+│   └── workflows/     # GitHub Actions workflows for CD
 ├── index.html         # Main HTML file
 ├── package.json       # Project configuration
 ├── vite.config.js     # Vite configuration
-├── deploy.sh          # Manual deployment script
 ├── .gitignore         # Git ignore file
 └── .gitattributes     # Git LFS configuration
 ```
