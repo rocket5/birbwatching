@@ -11,6 +11,9 @@ export default defineConfig({
     }
   },
   
+  // Configure assets handling to ensure GLB files are treated correctly
+  assetsInclude: ['**/*.glb'],
+  
   server: {
     port: 3001,
     open: true,
@@ -22,6 +25,13 @@ export default defineConfig({
       output: {
         manualChunks: {
           three: ['three']
+        },
+        // Make sure binary files aren't transformed
+        assetFileNames: (assetInfo) => {
+          if (assetInfo.name.endsWith('.glb')) {
+            return 'assets/models/[name][extname]';
+          }
+          return 'assets/[name]-[hash][extname]';
         }
       }
     },

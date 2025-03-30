@@ -137,23 +137,112 @@ export function initThreeJsScene() {
   // Path to model in public directory
   const modelPath = `${baseUrl}assets/models/HeartBirb.glb`;
   console.log('Loading model from:', modelPath);
-  
-  // Use the validator if available
-  if (window.validateGLB) {
-    window.validateGLB(modelPath)
-      .then(result => {
-        console.log('GLB validation successful:', result);
-        loadModelWithThreeJS();
-      })
-      .catch(error => {
-        console.error('GLB validation failed:', error);
-        showErrorMessage(`GLB validation failed: ${error.message}`);
-        createFallbackSphere();
-        loadModelWithThreeJS(); // Try loading anyway
+
+  // Load the model directly using fetch with arraybuffer response type to prevent content parsing issues
+  fetch(modelPath, { 
+    headers: {
+      'Accept': 'application/octet-stream'
+    },
+    cache: 'no-store' // Disable caching to ensure fresh content
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch model: ${response.status} ${response.statusText}`);
+      }
+      return response.arrayBuffer();
+    })
+    .then(buffer => {
+      // Pass the buffer directly to the GLTF loader
+      return new Promise((resolve, reject) => {
+        loader.parse(
+          buffer, 
+          '',
+          resolve,
+          reject
+        );
       });
-  } else {
-    console.warn('GLB validator not available');
-    loadModelWithThreeJS();
+    })
+    .then(gltf => {
+      console.log('Model loaded successfully via fetch & parse method');
+      
+      heartBirb = gltf.scene;
+      
+      // Center and scale the model if needed
+      heartBirb.scale.set(2, 2, 2);
+      scene.add(heartBirb);
+      
+      // Get all animations
+      if (gltf.animations && gltf.animations.length > 0) {
+        mixer = new THREE.AnimationMixer(heartBirb);
+        animations.push(...gltf.animations);
+        
+        console.log(`Loaded ${animations.length} animations:`);
+        animations.forEach((anim, index) => {
+          console.log(`${index + 1}: ${anim.name}`);
+        });
+        
+        // Play the first animation by default
+        if (animations.length > 0) {
+          playAnimation(0);
+          updateAnimationLabel();
+        }
+      } else {
+        console.warn('No animations found in the model');
+      }
+    })
+    .catch(error => {
+      console.error('Error loading model:', error);
+      console.error('Model path attempted:', modelPath);
+      
+      // Show error and create fallback
+      showErrorMessage(`Error loading model: ${error.message} (Path: ${modelPath})`);
+      createFallbackSphere();
+      
+      // Fall back to traditional loading method as last resort
+      fallbackLoadMethod();
+    });
+
+  // Fallback traditional loading method as last resort
+  function fallbackLoadMethod() {
+    console.log('Attempting fallback loading method...');
+    
+    loader.load(
+      modelPath,
+      (gltf) => {
+        console.log('Model loaded successfully via fallback method');
+        
+        heartBirb = gltf.scene;
+        
+        // Center and scale the model if needed
+        heartBirb.scale.set(2, 2, 2);
+        scene.add(heartBirb);
+        
+        // Get all animations
+        if (gltf.animations && gltf.animations.length > 0) {
+          mixer = new THREE.AnimationMixer(heartBirb);
+          animations.push(...gltf.animations);
+          
+          console.log(`Loaded ${animations.length} animations:`);
+          animations.forEach((anim, index) => {
+            console.log(`${index + 1}: ${anim.name}`);
+          });
+          
+          // Play the first animation by default
+          if (animations.length > 0) {
+            playAnimation(0);
+            updateAnimationLabel();
+          }
+        } else {
+          console.warn('No animations found in the model');
+        }
+      },
+      (xhr) => {
+        console.log(`Loading model (fallback): ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
+      },
+      (error) => {
+        console.error('Error loading model via fallback method:', error);
+      }
+    );
   }
 
   // Helper function to show error messages
@@ -185,66 +274,6 @@ export function initThreeJsScene() {
       sphere.name = 'fallback-sphere';
       scene.add(sphere);
     }
-  }
-  
-  // Function to load the model with ThreeJS
-  function loadModelWithThreeJS() {
-    // First try to check if the file exists using fetch
-    fetch(modelPath)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error(`Failed to fetch model: ${response.status} ${response.statusText}`);
-        }
-        console.log('Model file accessible, proceeding to load with GLTFLoader');
-        return true;
-      })
-      .catch(error => {
-        console.error('Fetch pre-check failed:', error);
-        showErrorMessage(`Failed to access model file at: ${modelPath}`);
-        createFallbackSphere();
-      })
-      .finally(() => {
-        // Try loading the model anyway, in case fetch had CORS issues but the model is accessible
-        loader.load(
-          modelPath,
-          (gltf) => {
-            heartBirb = gltf.scene;
-            
-            // Center and scale the model if needed
-            heartBirb.scale.set(2, 2, 2);
-            scene.add(heartBirb);
-            
-            // Get all animations
-            if (gltf.animations && gltf.animations.length > 0) {
-              mixer = new THREE.AnimationMixer(heartBirb);
-              animations.push(...gltf.animations);
-              
-              console.log(`Loaded ${animations.length} animations:`);
-              animations.forEach((anim, index) => {
-                console.log(`${index + 1}: ${anim.name}`);
-              });
-              
-              // Play the first animation by default
-              if (animations.length > 0) {
-                playAnimation(0);
-                updateAnimationLabel();
-              }
-            } else {
-              console.warn('No animations found in the model');
-            }
-          },
-          (xhr) => {
-            console.log(`Loading model: ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
-          },
-          (error) => {
-            console.error('Error loading model with GLTFLoader:', error);
-            console.error('Model path attempted:', modelPath);
-            
-            showErrorMessage(`GLTFLoader error: ${error.message} (Path: ${modelPath})`);
-            createFallbackSphere();
-          }
-        );
-      });
   }
 
   // Handle window resize
