@@ -96,3 +96,16 @@ This project uses Git LFS to manage large binary files such as images, videos, a
 - Audio files: .mp3, .wav
 - Documents: .pdf
 - Archives: .zip, .tar.gz
+
+## Troubleshooting
+
+### Three.js Import Issues
+
+For future reference, if you encounter similar issues with Three.js imports, remember that the paths should match the actual directory structure in the node_modules folder. The error happened because the system was trying to find OrbitControls in `three/addons/` when it's actually in `three/examples/jsm/`.
+
+When working with Three.js modules, use these import paths:
+
+```javascript
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+```

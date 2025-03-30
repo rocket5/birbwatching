@@ -2,14 +2,8 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  // Base path for GitHub Pages, use '/' if deploying to custom domain or root
+  // Use '/' for local development to avoid path issues
   base: '/birbwatching/',
-  
-  resolve: {
-    alias: {
-      'three': resolve(__dirname, 'node_modules/three')
-    }
-  },
   
   // Configure assets handling to ensure GLB files are treated correctly
   assetsInclude: ['**/*.glb'],
@@ -18,6 +12,7 @@ export default defineConfig({
     port: 3001,
     open: true,
   },
+  
   build: {
     outDir: 'dist',
     minify: 'terser',
