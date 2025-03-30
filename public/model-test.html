@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLB Model Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    pre {
+      background: #f5f5f5;
+      padding: 10px;
+      border-radius: 5px;
+      overflow: auto;
+    }
+    button {
+      padding: 8px 16px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 8px;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+    .success {
+      color: green;
+      font-weight: bold;
+    }
+  </style>
+  <script src="./assets/models/glb-validator.js"></script>
+</head>
+<body>
+  <h1>GLB Model Test</h1>
+  
+  <div>
+    <button id="validate-model">Validate Model</button>
+    <button id="fetch-raw">Fetch Raw Model</button>
+  </div>
+  
+  <h2>Results:</h2>
+  <pre id="results">Click a button to test the model...</pre>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const resultsEl = document.getElementById('results');
+      
+      // Get base URL based on deployment
+      const isLocalhost = window.location.hostname === 'localhost' || 
+                          window.location.hostname === '127.0.0.1';
+      const baseUrl = isLocalhost ? '' : '/birbwatching/';
+      const modelPath = `${baseUrl}assets/models/HeartBirb.glb`;
+      
+      // Display the model path
+      resultsEl.textContent = `Model path: ${modelPath}\n`;
+      
+      // Validate button
+      document.getElementById('validate-model').addEventListener('click', function() {
+        resultsEl.textContent = 'Validating model...\n';
+        
+        validateGLB(modelPath)
+          .then(result => {
+            resultsEl.innerHTML = `<span class="success">Validation successful!</span>\n` + 
+              JSON.stringify(result, null, 2);
+          })
+          .catch(error => {
+            resultsEl.innerHTML = `<span class="error">Validation failed:</span>\n` + 
+              error.toString();
+          });
+      });
+      
+      // Fetch raw model button
+      document.getElementById('fetch-raw').addEventListener('click', function() {
+        resultsEl.textContent = 'Fetching model...\n';
+        
+        fetch(modelPath)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error(`HTTP error: ${response.status} ${response.statusText}`);
+            }
+            resultsEl.innerHTML += `<span class="success">Fetch successful!</span>\n`;
+            resultsEl.innerHTML += `Content-Type: ${response.headers.get('Content-Type')}\n`;
+            resultsEl.innerHTML += `Content-Length: ${response.headers.get('Content-Length')}\n`;
+            
+            return response.blob();
+          })
+          .then(blob => {
+            resultsEl.innerHTML += `Blob type: ${blob.type}\n`;
+            resultsEl.innerHTML += `Blob size: ${blob.size} bytes\n`;
+          })
+          .catch(error => {
+            resultsEl.innerHTML += `<span class="error">Fetch failed:</span>\n` + 
+              error.toString();
+          });
+      });
+    });
+  </script>
+</body>
+</html> 

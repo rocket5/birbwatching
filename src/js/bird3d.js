@@ -138,62 +138,114 @@ export function initThreeJsScene() {
   const modelPath = `${baseUrl}assets/models/HeartBirb.glb`;
   console.log('Loading model from:', modelPath);
   
-  loader.load(
-    modelPath,
-    (gltf) => {
-      heartBirb = gltf.scene;
-      
-      // Center and scale the model if needed
-      heartBirb.scale.set(2, 2, 2);
-      scene.add(heartBirb);
-      
-      // Get all animations
-      if (gltf.animations && gltf.animations.length > 0) {
-        mixer = new THREE.AnimationMixer(heartBirb);
-        animations.push(...gltf.animations);
-        
-        console.log(`Loaded ${animations.length} animations:`);
-        animations.forEach((anim, index) => {
-          console.log(`${index + 1}: ${anim.name}`);
-        });
-        
-        // Play the first animation by default
-        if (animations.length > 0) {
-          playAnimation(0);
-          updateAnimationLabel();
-        }
-      } else {
-        console.warn('No animations found in the model');
-      }
-    },
-    (xhr) => {
-      console.log(`Loading model: ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
-    },
-    (error) => {
-      console.error('Error loading model:', error);
-      console.error('Model path attempted:', modelPath);
-      
-      // Fall back to a basic shape if model loading fails
+  // Use the validator if available
+  if (window.validateGLB) {
+    window.validateGLB(modelPath)
+      .then(result => {
+        console.log('GLB validation successful:', result);
+        loadModelWithThreeJS();
+      })
+      .catch(error => {
+        console.error('GLB validation failed:', error);
+        showErrorMessage(`GLB validation failed: ${error.message}`);
+        createFallbackSphere();
+        loadModelWithThreeJS(); // Try loading anyway
+      });
+  } else {
+    console.warn('GLB validator not available');
+    loadModelWithThreeJS();
+  }
+
+  // Helper function to show error messages
+  function showErrorMessage(message) {
+    const existingMessage = document.querySelector('div[data-error="model-load"]');
+    if (!existingMessage) {
+      const messageEl = document.createElement('div');
+      messageEl.setAttribute('data-error', 'model-load');
+      messageEl.style.position = 'absolute';
+      messageEl.style.top = '10px';
+      messageEl.style.left = '50%';
+      messageEl.style.transform = 'translateX(-50%)';
+      messageEl.style.background = 'rgba(255,0,0,0.7)';
+      messageEl.style.color = 'white';
+      messageEl.style.padding = '10px';
+      messageEl.style.borderRadius = '5px';
+      messageEl.style.zIndex = '1000';
+      messageEl.textContent = message;
+      document.body.appendChild(messageEl);
+    }
+  }
+
+  // Helper function to create fallback sphere
+  function createFallbackSphere() {
+    if (!scene.getObjectByName('fallback-sphere')) {
       const geometry = new THREE.SphereGeometry(1, 32, 32);
       const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
       const sphere = new THREE.Mesh(geometry, material);
+      sphere.name = 'fallback-sphere';
       scene.add(sphere);
-      
-      // Add text to indicate loading failure
-      const message = document.createElement('div');
-      message.style.position = 'absolute';
-      message.style.top = '10px';
-      message.style.left = '50%';
-      message.style.transform = 'translateX(-50%)';
-      message.style.background = 'rgba(255,0,0,0.7)';
-      message.style.color = 'white';
-      message.style.padding = '10px';
-      message.style.borderRadius = '5px';
-      message.style.zIndex = '1000';
-      message.textContent = `Failed to load 3D bird model from: ${modelPath}`;
-      document.body.appendChild(message);
     }
-  );
+  }
+  
+  // Function to load the model with ThreeJS
+  function loadModelWithThreeJS() {
+    // First try to check if the file exists using fetch
+    fetch(modelPath)
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`Failed to fetch model: ${response.status} ${response.statusText}`);
+        }
+        console.log('Model file accessible, proceeding to load with GLTFLoader');
+        return true;
+      })
+      .catch(error => {
+        console.error('Fetch pre-check failed:', error);
+        showErrorMessage(`Failed to access model file at: ${modelPath}`);
+        createFallbackSphere();
+      })
+      .finally(() => {
+        // Try loading the model anyway, in case fetch had CORS issues but the model is accessible
+        loader.load(
+          modelPath,
+          (gltf) => {
+            heartBirb = gltf.scene;
+            
+            // Center and scale the model if needed
+            heartBirb.scale.set(2, 2, 2);
+            scene.add(heartBirb);
+            
+            // Get all animations
+            if (gltf.animations && gltf.animations.length > 0) {
+              mixer = new THREE.AnimationMixer(heartBirb);
+              animations.push(...gltf.animations);
+              
+              console.log(`Loaded ${animations.length} animations:`);
+              animations.forEach((anim, index) => {
+                console.log(`${index + 1}: ${anim.name}`);
+              });
+              
+              // Play the first animation by default
+              if (animations.length > 0) {
+                playAnimation(0);
+                updateAnimationLabel();
+              }
+            } else {
+              console.warn('No animations found in the model');
+            }
+          },
+          (xhr) => {
+            console.log(`Loading model: ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
+          },
+          (error) => {
+            console.error('Error loading model with GLTFLoader:', error);
+            console.error('Model path attempted:', modelPath);
+            
+            showErrorMessage(`GLTFLoader error: ${error.message} (Path: ${modelPath})`);
+            createFallbackSphere();
+          }
+        );
+      });
+  }
 
   // Handle window resize
   window.addEventListener('resize', () => {
