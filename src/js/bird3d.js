@@ -63,6 +63,11 @@ export function initThreeJsScene(targetContainer = null) {
   const animations = [];
   let currentAnimation = 0;
   const clock = new THREE.Clock();
+  
+  // Random animation variables
+  let randomAnimationActive = false;
+  let randomAnimationTimer = null;
+  let allowedAnimations = []; // List of animations that can be played randomly (by name or index)
 
   // Create animation control UI
   const animationControlsContainer = document.createElement('div');
@@ -84,8 +89,9 @@ export function initThreeJsScene(targetContainer = null) {
   prevButton.style.padding = '5px 10px';
   prevButton.addEventListener('click', () => {
     if (animations.length > 0) {
-      currentAnimation = (currentAnimation - 1 + animations.length) % animations.length;
+      stopRandomAnimation();
       playAnimation(currentAnimation);
+      currentAnimation = (currentAnimation - 1 + animations.length) % animations.length;
       updateAnimationLabel();
     }
   });
@@ -106,16 +112,38 @@ export function initThreeJsScene(targetContainer = null) {
   nextButton.style.padding = '5px 10px';
   nextButton.addEventListener('click', () => {
     if (animations.length > 0) {
-      currentAnimation = (currentAnimation + 1) % animations.length;
+      stopRandomAnimation();
       playAnimation(currentAnimation);
+      currentAnimation = (currentAnimation + 1) % animations.length;
       updateAnimationLabel();
     }
   });
   animationControlsContainer.appendChild(nextButton);
 
+  // Random animation button
+  const randomButton = document.createElement('button');
+  randomButton.textContent = 'Random';
+  randomButton.style.padding = '5px 10px';
+  randomButton.addEventListener('click', () => {
+    if (animations.length > 0) {
+      if (randomAnimationActive) {
+        stopRandomAnimation();
+        randomButton.textContent = 'Random';
+      } else {
+        startRandomAnimation();
+        randomButton.textContent = 'Stop Random';
+      }
+    }
+  });
+  animationControlsContainer.appendChild(randomButton);
+
   function updateAnimationLabel() {
     if (animations.length > 0) {
-      animationLabel.textContent = `${animations[currentAnimation].name} (${currentAnimation + 1}/${animations.length})`;
+      if (randomAnimationActive) {
+        animationLabel.textContent = `Random: ${animations[currentAnimation].name}`;
+      } else {
+        animationLabel.textContent = `${animations[currentAnimation].name} (${currentAnimation + 1}/${animations.length})`;
+      }
     } else {
       animationLabel.textContent = 'No animations';
     }
@@ -131,8 +159,94 @@ export function initThreeJsScene(targetContainer = null) {
       action.reset();
       action.play();
       
-      console.log(`Playing animation: ${animations[index].name}`);
+      console.log(`Playing animation: ${animations[index].name}, index: ${index}`);
     }
+  }
+  
+  /**
+   * Plays random animations from a specified list
+   * @param {Object} options - Configuration options
+   * @param {Array} [options.animationNames] - List of animation names to include (if empty, all animations are used)
+   * @param {Array} [options.animationIndices] - List of animation indices to include (alternative to animationNames)
+   * @param {number} [options.minDuration=3] - Minimum duration in seconds before changing animations
+   * @param {number} [options.maxDuration=8] - Maximum duration in seconds before changing animations
+   * @returns {Object} - Controls for the random animation (stop function)
+   */
+  function startRandomAnimation(options = {}) {
+    // Default options
+    const config = {
+      animationNames: options.animationNames || ["Peck", "Peck_R", "Peck_L", "Hop_Walk", "Idle_Tweet", "Idle_LookAround", "Idle"],
+      animationIndices: options.animationIndices || [],
+      minDuration: options.minDuration || 1,
+      maxDuration: options.maxDuration || 3
+    };
+    
+    // Stop any existing random animation
+    stopRandomAnimation();
+    
+    // Create a list of allowed animation indices
+    allowedAnimations = [];
+    
+    // If animation names are provided, find their indices
+    if (config.animationNames && config.animationNames.length > 0) {
+      animations.forEach((anim, index) => {
+        if (config.animationNames.includes(anim.name)) {
+          allowedAnimations.push(index);
+        }
+      });
+    } 
+    // If animation indices are provided, use them
+    else if (config.animationIndices && config.animationIndices.length > 0) {
+      allowedAnimations = config.animationIndices.filter(index => 
+        index >= 0 && index < animations.length
+      );
+    } 
+    // If neither names nor indices are provided, use all animations
+    else {
+      allowedAnimations = animations.map((_, index) => index);
+    }
+    
+    // Don't proceed if we don't have any valid animations
+    if (allowedAnimations.length === 0) {
+      console.warn('No valid animations found for random playback');
+      return { stop: () => {} };
+    }
+    
+    // Mark random animation as active
+    randomAnimationActive = true;
+    
+    // Function to play a random animation
+    const playRandomAnimation = () => {
+      // Pick a random animation from the allowed list
+      const randomIndex = Math.floor(Math.random() * allowedAnimations.length);
+      currentAnimation = allowedAnimations[randomIndex];
+      
+      // Play it
+      playAnimation(currentAnimation);
+      updateAnimationLabel();
+      
+      // Schedule the next animation
+      const nextDuration = Math.random() * 
+        (config.maxDuration - config.minDuration) + config.minDuration;
+      
+      randomAnimationTimer = setTimeout(playRandomAnimation, nextDuration * 1000);
+    };
+    
+    // Start the random animation sequence
+    playRandomAnimation();
+    
+    // Return control object
+    return { stop: stopRandomAnimation };
+  }
+  
+  function stopRandomAnimation() {
+    if (randomAnimationTimer) {
+      clearTimeout(randomAnimationTimer);
+      randomAnimationTimer = null;
+    }
+    randomAnimationActive = false;
+    updateAnimationLabel();
+    randomButton.textContent = 'Random';
   }
 
   // Load the HeartBirb model
@@ -184,6 +298,7 @@ export function initThreeJsScene(targetContainer = null) {
         mixer = new THREE.AnimationMixer(heartBirb);
         animations.push(...gltf.animations);
         
+        // list all animations
         console.log(`Loaded ${animations.length} animations:`);
         animations.forEach((anim, index) => {
           console.log(`${index + 1}: ${anim.name}`);
@@ -219,6 +334,13 @@ export function initThreeJsScene(targetContainer = null) {
     
     renderer.render(scene, camera);
   }
+  
+  // Expose the random animation function so it can be called from outside
+  container.startRandomAnimation = startRandomAnimation;
+  container.stopRandomAnimation = stopRandomAnimation;
 
   animate();
+  
+  // Return the container with attached control methods
+  return container;
 }
