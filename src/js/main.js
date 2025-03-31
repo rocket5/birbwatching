@@ -3,7 +3,7 @@ import { initThreeJsScene } from './bird3d.js';
 //import { initSceneAndLoadGLB } from './testLoader.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  console.log('BirdWatching website loaded');
+  console.log('Birb Watching website loaded');
   
   // Example of dynamically updating the copyright year
   const footerYear = document.querySelector('footer p');

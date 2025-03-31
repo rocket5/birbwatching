@@ -32,7 +32,7 @@ export function initThreeJsScene() {
 
   // Create a camera
   const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(0, 1, 5);
+  camera.position.set(0, 1, 1);
 
   // Create a renderer
   const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -47,6 +47,10 @@ export function initThreeJsScene() {
   controls.dampingFactor = 0.05;
   controls.minDistance = 3;
   controls.maxDistance = 10;
+  controls.minPolarAngle = Math.PI / 2; // 90 degrees
+  controls.maxPolarAngle = Math.PI / 2;
+  controls.enableZoom = false;
+  controls.enablePan = false;
   controls.update();
 
   // Create animation mixer
@@ -167,7 +171,8 @@ export function initThreeJsScene() {
       heartBirb = gltf.scene;
       
       // Center and scale the model if needed
-      heartBirb.scale.set(2, 2, 2);
+      heartBirb.scale.set(1, 1, 1);
+      heartBirb.position.set(0, -1, 0);
       scene.add(heartBirb);
       
       // Get all animations
@@ -189,91 +194,6 @@ export function initThreeJsScene() {
         console.warn('No animations found in the model');
       }
     })
-    .catch(error => {
-      console.error('Error loading model:', error);
-      console.error('Model path attempted:', modelPath);
-      
-      // Show error and create fallback
-      showErrorMessage(`Error loading model: ${error.message} (Path: ${modelPath})`);
-      createFallbackSphere();
-      
-      // Fall back to traditional loading method as last resort
-      fallbackLoadMethod();
-    });
-
-  // Fallback traditional loading method as last resort
-  function fallbackLoadMethod() {
-    console.log('Attempting fallback loading method...');
-    
-    loader.load(
-      modelPath,
-      (gltf) => {
-        console.log('Model loaded successfully via fallback method');
-        
-        heartBirb = gltf.scene;
-        
-        // Center and scale the model if needed
-        heartBirb.scale.set(2, 2, 2);
-        scene.add(heartBirb);
-        
-        // Get all animations
-        if (gltf.animations && gltf.animations.length > 0) {
-          mixer = new THREE.AnimationMixer(heartBirb);
-          animations.push(...gltf.animations);
-          
-          console.log(`Loaded ${animations.length} animations:`);
-          animations.forEach((anim, index) => {
-            console.log(`${index + 1}: ${anim.name}`);
-          });
-          
-          // Play the first animation by default
-          if (animations.length > 0) {
-            playAnimation(0);
-            updateAnimationLabel();
-          }
-        } else {
-          console.warn('No animations found in the model');
-        }
-      },
-      (xhr) => {
-        console.log(`Loading model (fallback): ${(xhr.loaded / xhr.total * 100).toFixed(2)}%`);
-      },
-      (error) => {
-        console.error('Error loading model via fallback method:', error);
-      }
-    );
-  }
-
-  // Helper function to show error messages
-  function showErrorMessage(message) {
-    const existingMessage = document.querySelector('div[data-error="model-load"]');
-    if (!existingMessage) {
-      const messageEl = document.createElement('div');
-      messageEl.setAttribute('data-error', 'model-load');
-      messageEl.style.position = 'absolute';
-      messageEl.style.top = '10px';
-      messageEl.style.left = '50%';
-      messageEl.style.transform = 'translateX(-50%)';
-      messageEl.style.background = 'rgba(255,0,0,0.7)';
-      messageEl.style.color = 'white';
-      messageEl.style.padding = '10px';
-      messageEl.style.borderRadius = '5px';
-      messageEl.style.zIndex = '1000';
-      messageEl.textContent = message;
-      document.body.appendChild(messageEl);
-    }
-  }
-
-  // Helper function to create fallback sphere
-  function createFallbackSphere() {
-    if (!scene.getObjectByName('fallback-sphere')) {
-      const geometry = new THREE.SphereGeometry(1, 32, 32);
-      const material = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-      const sphere = new THREE.Mesh(geometry, material);
-      sphere.name = 'fallback-sphere';
-      scene.add(sphere);
-    }
-  }
 
   // Handle window resize
   window.addEventListener('resize', () => {
