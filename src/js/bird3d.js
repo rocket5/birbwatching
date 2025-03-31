@@ -74,78 +74,6 @@ export function initThreeJsScene(targetContainer = null) {
   // Animation actions cache to avoid recreating actions
   const animationActions = new Map();
 
-  // Create animation control UI
-  const animationControlsContainer = document.createElement('div');
-  animationControlsContainer.style.position = 'absolute';
-  animationControlsContainer.style.bottom = '10px';
-  animationControlsContainer.style.left = '50%';
-  animationControlsContainer.style.transform = 'translateX(-50%)';
-  animationControlsContainer.style.zIndex = '2';
-  animationControlsContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
-  animationControlsContainer.style.padding = '10px';
-  animationControlsContainer.style.borderRadius = '5px';
-  animationControlsContainer.style.display = 'flex';
-  animationControlsContainer.style.gap = '10px';
-  container.appendChild(animationControlsContainer);
-
-  // Previous animation button
-  const prevButton = document.createElement('button');
-  prevButton.textContent = 'Previous';
-  prevButton.style.padding = '5px 10px';
-  prevButton.addEventListener('click', () => {
-    if (animations.length > 0) {
-      stopRandomAnimation();
-      // Update current animation index first
-      currentAnimation = (currentAnimation - 1 + animations.length) % animations.length;
-      // Then play it
-      playAnimation(currentAnimation);
-      updateAnimationLabel();
-    }
-  });
-  animationControlsContainer.appendChild(prevButton);
-
-  // Animation label
-  const animationLabel = document.createElement('div');
-  animationLabel.style.display = 'flex';
-  animationLabel.style.alignItems = 'center';
-  animationLabel.style.justifyContent = 'center';
-  animationLabel.style.minWidth = '120px';
-  animationLabel.textContent = 'No animations';
-  animationControlsContainer.appendChild(animationLabel);
-
-  // Next animation button
-  const nextButton = document.createElement('button');
-  nextButton.textContent = 'Next';
-  nextButton.style.padding = '5px 10px';
-  nextButton.addEventListener('click', () => {
-    if (animations.length > 0) {
-      stopRandomAnimation();
-      // Update current animation index first
-      currentAnimation = (currentAnimation + 1) % animations.length;
-      // Then play it
-      playAnimation(currentAnimation);
-      updateAnimationLabel();
-    }
-  });
-  animationControlsContainer.appendChild(nextButton);
-
-  // Random animation button
-  const randomButton = document.createElement('button');
-  randomButton.textContent = 'Random';
-  randomButton.style.padding = '5px 10px';
-  randomButton.addEventListener('click', () => {
-    if (animations.length > 0) {
-      if (randomAnimationActive) {
-        stopRandomAnimation();
-        randomButton.textContent = 'Random';
-      } else {
-        startRandomAnimation();
-        randomButton.textContent = 'Stop Random';
-      }
-    }
-  });
-  animationControlsContainer.appendChild(randomButton);
-
   // Add a debug function for animations
   function printAnimationInfo() {
     console.log(`----- Animation Debug Info -----`);
@@ -160,30 +88,6 @@ export function initThreeJsScene(targetContainer = null) {
     console.log(`Allowed animations: ${allowedAnimations.join(', ')}`);
     console.log(`Actions in cache: ${Array.from(animationActions.keys()).join(', ')}`);
     console.log(`--------------------------------`);
-  }
-
-  // Add a debug button
-  const debugButton = document.createElement('button');
-  debugButton.textContent = 'Debug';
-  debugButton.style.padding = '5px 10px';
-  debugButton.addEventListener('click', printAnimationInfo);
-  animationControlsContainer.appendChild(debugButton);
-
-  function updateAnimationLabel() {
-    if (animations.length > 0) {
-      if (randomAnimationActive) {
-        animationLabel.textContent = `Random: ${animations[currentAnimation].name}`;
-      } else {
-        // Use 0-based indexing and show total number of animations
-        animationLabel.textContent = `${animations[currentAnimation].name} (${currentAnimation}/${animations.length-1})`;
-      }
-      
-      // Extra debug info in console
-      console.log(`Animation label updated: ${animationLabel.textContent}`);
-      console.log(`Current animation: index=${currentAnimation}, name=${animations[currentAnimation].name}`);
-    } else {
-      animationLabel.textContent = 'No animations';
-    }
   }
 
   function playAnimation(index, fadeTime = 0.5) {
@@ -235,6 +139,7 @@ export function initThreeJsScene(targetContainer = null) {
   }
   
   /**
+   * Tim: Animation names don't match the animation indices, so we're using the indices directly
    * Plays random animations from a specified list with crossfading
    * @param {Object} options - Configuration options
    * @param {Array} [options.animationNames] - List of animation names to include (if empty, all animations are used)
@@ -339,7 +244,6 @@ export function initThreeJsScene(targetContainer = null) {
       
       // Play it with crossfading
       playAnimation(animationIndex, config.fadeTime);
-      updateAnimationLabel();
       
       // Schedule the next animation
       const nextDuration = Math.random() * 
@@ -363,8 +267,6 @@ export function initThreeJsScene(targetContainer = null) {
       randomAnimationTimer = null;
     }
     randomAnimationActive = false;
-    updateAnimationLabel();
-    randomButton.textContent = 'Random';
   }
 
   // Load the HeartBirb model
@@ -443,12 +345,8 @@ export function initThreeJsScene(targetContainer = null) {
           }
         });
         
-        // Play the first animation by default
-        if (animations.length > 0) {
-          currentAnimation = 0;
-          playAnimation(0);
-          updateAnimationLabel();
-        }
+        // Start random animation automatically once model and animations are loaded
+        startRandomAnimation();
       } else {
         console.warn('No animations found in the model');
       }
