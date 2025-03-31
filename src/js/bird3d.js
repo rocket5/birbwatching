@@ -337,7 +337,7 @@ export function initThreeJsScene(targetContainer = null) {
       heartBirb = gltf.scene;
       
       // Center and scale the model if needed
-      heartBirb.scale.set(1, 1, 1);
+      heartBirb.scale.set(1.25, 1.25, 1.25);
       heartBirb.position.set(0, -1, 0);
       
       // Enable shadows for the bird model

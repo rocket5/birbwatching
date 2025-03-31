@@ -22,10 +22,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 200);
   }
 
+  // Logo text fade-in effect
+  const logoText = document.querySelector('.logo-text');
+  if (logoText) {
+    logoText.style.opacity = '0';
+    logoText.style.transition = 'opacity 1s ease-in-out';
+    
+    setTimeout(() => {
+      logoText.style.opacity = '1';
+    }, 500);
+  }
+
   try {
-    // Initialize Three.js scene in the left column
+    // Initialize Three.js scene in the bird model container
     const container = document.getElementById('bird3d-container');
-    initThreeJsScene(container);
+    if (container) {
+      initThreeJsScene(container);
+    } else {
+      console.error('Bird container element not found');
+    }
     //initSceneAndLoadGLB();
   } catch (error) {
     console.error('Error initializing 3D scene:', error);
