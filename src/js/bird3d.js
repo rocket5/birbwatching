@@ -39,7 +39,7 @@ export function initThreeJsScene(targetContainer = null) {
   scene.add(directionalLight);
 
   // Create a camera
-  const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
   camera.position.set(0, 1, 1);
 
   // Create a renderer with shadow support
@@ -57,7 +57,7 @@ export function initThreeJsScene(targetContainer = null) {
   const shadowSegments = 32;
   const shadowGeometry = new THREE.CircleGeometry(shadowRadius, shadowSegments);
   const shadowMaterial = new THREE.MeshStandardMaterial({ 
-    color: 0xffffff,
+    color: 0x2a9d8f,
     transparent: true,
     opacity: 0,
     alphaTest: 0.1,
