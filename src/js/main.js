@@ -23,8 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   try {
-    // Initialize Three.js scene
-    initThreeJsScene();
+    // Initialize Three.js scene in the left column
+    const container = document.getElementById('bird3d-container');
+    initThreeJsScene(container);
     //initSceneAndLoadGLB();
   } catch (error) {
     console.error('Error initializing 3D scene:', error);

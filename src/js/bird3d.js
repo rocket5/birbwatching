@@ -4,18 +4,22 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
 // Function to initialize a Three.js scene
-export function initThreeJsScene() {
-  // Create a container for the 3D scene
-  const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.top = '0';
-  container.style.left = '0';
-  container.style.width = '100%';
-  container.style.height = '100%';
-  container.style.zIndex = '-1';
-  container.style.opacity = '0.9';
-  container.id = 'bird-background';
-  document.body.appendChild(container);
+export function initThreeJsScene(targetContainer = null) {
+  // Use provided container or create a new one
+  const container = targetContainer || document.createElement('div');
+  
+  if (!targetContainer) {
+    // Only set these styles if we're creating a new container
+    container.style.position = 'absolute';
+    container.style.top = '0';
+    container.style.left = '0';
+    container.style.width = '100%';
+    container.style.height = '100%';
+    container.style.zIndex = '-1';
+    container.style.opacity = '0.9';
+    container.id = 'bird-background';
+    document.body.appendChild(container);
+  }
 
   // Create a scene
   const scene = new THREE.Scene();
@@ -31,12 +35,12 @@ export function initThreeJsScene() {
   scene.add(directionalLight);
 
   // Create a camera
-  const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(75, container.clientWidth / container.clientHeight, 0.1, 1000);
   camera.position.set(0, 1, 1);
 
   // Create a renderer
   const renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   container.appendChild(renderer.domElement);
@@ -63,16 +67,16 @@ export function initThreeJsScene() {
   // Create animation control UI
   const animationControlsContainer = document.createElement('div');
   animationControlsContainer.style.position = 'absolute';
-  animationControlsContainer.style.bottom = '20px';
+  animationControlsContainer.style.bottom = '10px';
   animationControlsContainer.style.left = '50%';
   animationControlsContainer.style.transform = 'translateX(-50%)';
-  animationControlsContainer.style.zIndex = '100';
+  animationControlsContainer.style.zIndex = '2';
   animationControlsContainer.style.backgroundColor = 'rgba(255, 255, 255, 0.7)';
   animationControlsContainer.style.padding = '10px';
   animationControlsContainer.style.borderRadius = '5px';
   animationControlsContainer.style.display = 'flex';
   animationControlsContainer.style.gap = '10px';
-  document.body.appendChild(animationControlsContainer);
+  container.appendChild(animationControlsContainer);
 
   // Previous animation button
   const prevButton = document.createElement('button');
@@ -197,9 +201,9 @@ export function initThreeJsScene() {
 
   // Handle window resize
   window.addEventListener('resize', () => {
-    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.aspect = container.clientWidth / container.clientHeight;
     camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(container.clientWidth, container.clientHeight);
   });
 
   // Animation loop
