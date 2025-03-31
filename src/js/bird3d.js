@@ -16,14 +16,13 @@ export function initThreeJsScene(targetContainer = null) {
     container.style.width = '100%';
     container.style.height = '100%';
     container.style.zIndex = '-1';
-    container.style.opacity = '0.9';
+    container.style.opacity = '0';
     container.id = 'bird-background';
     document.body.appendChild(container);
   }
 
   // Create a scene
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0xf0f8ff); // Light blue sky background
 
   // Add ambient light
   const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
@@ -31,7 +30,7 @@ export function initThreeJsScene(targetContainer = null) {
 
   // Add directional light with shadow casting
   const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(5, 5, 5);
+  directionalLight.position.set(1, 5, 0);
   directionalLight.castShadow = true;
   directionalLight.shadow.mapSize.width = 1024;
   directionalLight.shadow.mapSize.height = 1024;
@@ -40,16 +39,17 @@ export function initThreeJsScene(targetContainer = null) {
   scene.add(directionalLight);
 
   // Create a camera
-  const camera = new THREE.PerspectiveCamera(40, container.clientWidth / container.clientHeight, 0.1, 1000);
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 1000);
   camera.position.set(0, 1, 1);
 
   // Create a renderer with shadow support
-  const renderer = new THREE.WebGLRenderer({ antialias: true });
+  const renderer = new THREE.WebGLRenderer({ alpha: true });
   renderer.setSize(container.clientWidth, container.clientHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+  renderer.setClearColor(0x000000, 0); // 0 alpha = fully transparent background
   container.appendChild(renderer.domElement);
 
   // Create a circle geometry to receive shadows under the bird
@@ -59,14 +59,18 @@ export function initThreeJsScene(targetContainer = null) {
   const shadowMaterial = new THREE.MeshStandardMaterial({ 
     color: 0xffffff,
     transparent: true,
-    opacity: 0.7,
+    opacity: 0,
+    alphaTest: 0.1,
     roughness: 1,
-    metalness: 0
+    metalness: 0,
+    side: THREE.DoubleSide
   });
+
   const shadowCircle = new THREE.Mesh(shadowGeometry, shadowMaterial);
   shadowCircle.rotation.x = -Math.PI / 2; // Rotate to lie flat
   shadowCircle.position.set(0, -1, 0); // Position under the bird's feet
   shadowCircle.receiveShadow = true;
+  shadowCircle.scale.set(2, 2, 2);
   scene.add(shadowCircle);
   
   // Add orbit controls
