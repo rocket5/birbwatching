@@ -130,10 +130,6 @@ export function initThreeJsScene() {
   // Load the HeartBirb model
   const loader = new GLTFLoader();
   
-  // Get the base URL from the import.meta if in development,
-  // or use the configured base path if in production
-  //const baseUrl = import.meta.env?.DEV ? '' : import.meta.env?.BASE_URL || '/birbwatching/';
-  
   // Use base URL to ensure paths work in deployment
   const baseUrl = import.meta.env.BASE_URL || '/';
 
