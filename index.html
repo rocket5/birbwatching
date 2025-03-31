@@ -3,30 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>BirdWatching</title>
+  <title>Birb Watching</title>
+  <!-- Bootstrap CSS from CDN -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <!-- Custom styles -->
   <link rel="stylesheet" href="./src/css/main.css">
 </head>
 <body>
-  <div class="main-container">
-    <div class="bird-model-container" id="bird3d-container">
-      <!-- 3D bird visualization will be placed here -->
-    </div>
-    
-    <div class="logo-text">
-      <h1>Birb Watching</h1>
-    </div>
+  <div class="container main-container">
+    <header class="py-4">
+      <div class="bird-model-container" id="bird3d-container">
+        <!-- 3D bird visualization will be placed here -->
+      </div>
+      
+      <div class="logo-text">
+        <h1>Birb Watching</h1>
+      </div>
+    </header>
     
     <main>
       <section class="hero">
-        <p><em>Birb Watching</em> follows the tenets of Cozy Games. Unlike traditional bird watching simulators, Birb Watching will not foster completionist instincts. It is a game that the user can win, but there is no lose state. Birb Watching is a peaceful and gentle experience, allowing for relaxation and a gradual understanding of the relationships that can develop between bird and player, bird and bird, and player and environment. </p>
+        <div class="card shadow-sm mb-4">
+          <div class="card-body">
+            <p><em>Birb Watching</em> follows the tenets of Cozy Games. Unlike traditional bird watching simulators, Birb Watching will not foster completionist instincts. It is a game that the user can win, but there is no lose state. Birb Watching is a peaceful and gentle experience, allowing for relaxation and a gradual understanding of the relationships that can develop between bird and player, bird and bird, and player and environment.</p>
+          </div>
+        </div>
+      </section>
+      
+      <!-- Additional content sections can be added here -->
+      <section class="content-section">
+        <!-- This section is for future content -->
       </section>
     </main>
   </div>
 
-  <footer>
-    <p>&copy; 2024 Rocket 5 Studios Inc. All rights reserved.</p>
+  <footer class="py-3 text-center">
+    <div class="container">
+      <p class="mb-0">&copy; 2024 Rocket 5 Studios Inc. All rights reserved.</p>
+    </div>
   </footer>
 
+  <!-- Bootstrap JS Bundle with Popper -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script type="module" src="./src/js/main.js"></script>
 </body>
 </html> 
