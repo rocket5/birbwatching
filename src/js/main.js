@@ -1,6 +1,6 @@
 // Main JavaScript file
-//import { initThreeJsScene } from './bird3d.js';
-import { initSceneAndLoadGLB } from './testLoader.js';
+import { initThreeJsScene } from './bird3d.js';
+//import { initSceneAndLoadGLB } from './testLoader.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   console.log('BirdWatching website loaded');
@@ -24,8 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   try {
     // Initialize Three.js scene
-    //initThreeJsScene();
-    initSceneAndLoadGLB();
+    initThreeJsScene();
+    //initSceneAndLoadGLB();
   } catch (error) {
     console.error('Error initializing 3D scene:', error);
   }
