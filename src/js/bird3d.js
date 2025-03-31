@@ -68,6 +68,11 @@ export function initThreeJsScene(targetContainer = null) {
   let randomAnimationActive = false;
   let randomAnimationTimer = null;
   let allowedAnimations = []; // List of animations that can be played randomly (by name or index)
+  let currentAction = null;
+  let previousAction = null;
+  
+  // Animation actions cache to avoid recreating actions
+  const animationActions = new Map();
 
   // Create animation control UI
   const animationControlsContainer = document.createElement('div');
@@ -149,36 +154,62 @@ export function initThreeJsScene(targetContainer = null) {
     }
   }
 
-  function playAnimation(index) {
+  function playAnimation(index, fadeTime = 0.5) {
     if (mixer && animations.length > 0) {
-      // Stop all animations
-      mixer.stopAllAction();
+      // Get or create the animation action
+      let action;
+      if (animationActions.has(index)) {
+        action = animationActions.get(index);
+      } else {
+        action = mixer.clipAction(animations[index]);
+        animationActions.set(index, action);
+      }
+
+      // If we already have a current action, create a crossfade
+      if (currentAction) {
+        // Store the previous action for crossfading
+        previousAction = currentAction;
+        
+        // Set up crossfade parameters
+        previousAction.fadeOut(fadeTime);
+        action.reset().fadeIn(fadeTime).play();
+        
+        // After fade duration, stop the previous action completely
+        setTimeout(() => {
+          if (previousAction) {
+            previousAction.stop();
+          }
+        }, fadeTime * 1000);
+      } else {
+        // No previous action, just play
+        action.reset().play();
+      }
       
-      // Play the selected animation
-      const action = mixer.clipAction(animations[index]);
-      action.reset();
-      action.play();
+      // Update current action reference
+      currentAction = action;
       
       console.log(`Playing animation: ${animations[index].name}, index: ${index}`);
     }
   }
   
   /**
-   * Plays random animations from a specified list
+   * Plays random animations from a specified list with crossfading
    * @param {Object} options - Configuration options
    * @param {Array} [options.animationNames] - List of animation names to include (if empty, all animations are used)
    * @param {Array} [options.animationIndices] - List of animation indices to include (alternative to animationNames)
    * @param {number} [options.minDuration=3] - Minimum duration in seconds before changing animations
    * @param {number} [options.maxDuration=8] - Maximum duration in seconds before changing animations
+   * @param {number} [options.fadeTime=0.5] - Duration of crossfade between animations in seconds
    * @returns {Object} - Controls for the random animation (stop function)
    */
   function startRandomAnimation(options = {}) {
     // Default options
     const config = {
-      animationNames: options.animationNames || ["Peck", "Peck_R", "Peck_L", "Hop_Walk", "Idle_Tweet", "Idle_LookAround", "Idle"],
+      animationNames: options.animationNames || ["Peck", "Peck_R", "Peck_L", "Idle_Tweet", "Idle_LookAround", "Idle"],
       animationIndices: options.animationIndices || [],
       minDuration: options.minDuration || 1,
-      maxDuration: options.maxDuration || 3
+      maxDuration: options.maxDuration || 3,
+      fadeTime: options.fadeTime || 0.5
     };
     
     // Stop any existing random animation
@@ -189,11 +220,23 @@ export function initThreeJsScene(targetContainer = null) {
     
     // If animation names are provided, find their indices
     if (config.animationNames && config.animationNames.length > 0) {
+      // Create a more accurate name-to-index mapping
+      const nameToIndexMap = {};
       animations.forEach((anim, index) => {
-        if (config.animationNames.includes(anim.name)) {
-          allowedAnimations.push(index);
+        nameToIndexMap[anim.name] = index;
+      });
+      
+      // Use the map to get the correct indices
+      config.animationNames.forEach(name => {
+        if (nameToIndexMap.hasOwnProperty(name)) {
+          allowedAnimations.push(nameToIndexMap[name]);
+        } else {
+          console.warn(`Animation name not found: ${name}`);
         }
       });
+      
+      console.log("Animation name to index mappings:", nameToIndexMap);
+      console.log("Allowed animations:", allowedAnimations);
     } 
     // If animation indices are provided, use them
     else if (config.animationIndices && config.animationIndices.length > 0) {
@@ -221,8 +264,8 @@ export function initThreeJsScene(targetContainer = null) {
       const randomIndex = Math.floor(Math.random() * allowedAnimations.length);
       currentAnimation = allowedAnimations[randomIndex];
       
-      // Play it
-      playAnimation(currentAnimation);
+      // Play it with crossfading
+      playAnimation(currentAnimation, config.fadeTime);
       updateAnimationLabel();
       
       // Schedule the next animation
@@ -301,7 +344,8 @@ export function initThreeJsScene(targetContainer = null) {
         // list all animations
         console.log(`Loaded ${animations.length} animations:`);
         animations.forEach((anim, index) => {
-          console.log(`${index + 1}: ${anim.name}`);
+          // Log with the actual array index to avoid confusion
+          console.log(`${index}: ${anim.name}`);
         });
         
         // Play the first animation by default
