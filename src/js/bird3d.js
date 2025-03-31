@@ -132,8 +132,11 @@ export function initThreeJsScene() {
   
   // Get the base URL from the import.meta if in development,
   // or use the configured base path if in production
-  const baseUrl = import.meta.env?.DEV ? '' : import.meta.env?.BASE_URL || '/birbwatching/';
+  //const baseUrl = import.meta.env?.DEV ? '' : import.meta.env?.BASE_URL || '/birbwatching/';
   
+  // Use base URL to ensure paths work in deployment
+  const baseUrl = import.meta.env.BASE_URL || '/';
+
   // Path to model in public directory
   const modelPath = `${baseUrl}assets/models/HeartBirb.glb`;
   console.log('Loading model from:', modelPath);
