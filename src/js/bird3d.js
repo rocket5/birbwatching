@@ -181,7 +181,7 @@ export function initThreeJsScene(targetContainer = null) {
     // Default options
     const config = {
       animationNames: options.animationNames || [],
-      animationIndices: options.animationIndices || [5, 6, 7, 15, 16, 17],
+      animationIndices: options.animationIndices || [4, 5, 6, 14, 15, 16],
       minDuration: options.minDuration || 1,
       maxDuration: options.maxDuration || 3,
       fadeTime: options.fadeTime || 0.5
@@ -348,6 +348,28 @@ export function initThreeJsScene(targetContainer = null) {
       });
       
       scene.add(heartBirb);
+      
+      // Search for the Birb_3 mesh and apply texture
+      // const textureLoader = new THREE.TextureLoader();
+      // const baseTextureUrl = `${baseUrl}assets/models/Birb_3_Base_Color.png`;
+      
+      // heartBirb.traverse((node) => {
+      //   if (node.isMesh && node.name === 'Birb_3') {
+      //     console.log('Found Birb_3 mesh, applying texture');
+          
+      //     // Load the texture
+      //     textureLoader.load(baseTextureUrl, (texture) => {
+      //       const material = new THREE.MeshStandardMaterial({
+      //         map: texture,
+      //         roughness: 1,
+      //         metalness: 0
+      //       });
+            
+      //       // Apply the material to the mesh
+      //       node.material = material;
+      //     });
+      //   }
+      // });
       
       // Get all animations
       if (gltf.animations && gltf.animations.length > 0) {
