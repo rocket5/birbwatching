@@ -338,7 +338,8 @@ export function initThreeJsScene(targetContainer = null) {
       
       // Center and scale the model if needed
       heartBirb.scale.set(1.25, 1.25, 1.25);
-      heartBirb.position.set(0, -1, 0);
+      heartBirb.position.set(0, -0.8, 0);
+      heartBirb.rotation.set(0, 20, 0);
       
       // Enable shadows for the bird model
       heartBirb.traverse((node) => {
