@@ -32,7 +32,8 @@ body {
   flex-direction: column;
   min-height: 100vh;
   color: white;
-  background: linear-gradient(135deg, var(--bs-primary), var(--bs-info));
+  /* background: linear-gradient(135deg, var(--bs-primary), var(--bs-info)); */
+  background-image: linear-gradient(225deg, #fab005 5%, #ff8787 95%);
   background-attachment: fixed;
 }
 
