@@ -130,6 +130,8 @@ main {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem 0;
+  position: relative;
+  z-index: 0;
 }
 
 .hero p {
@@ -239,4 +241,19 @@ footer .container p {
   margin-left: -50vw;
   margin-right: -50vw;
   overflow: hidden;
+  margin-bottom: 0;
+}
+
+/* Transition section between wave divider and hero */
+.wave-transition {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  height: 100px;
+  background: linear-gradient(to bottom, white 0%, rgba(255, 255, 255, 0) 100%);
+  margin-top: -1px;
+  z-index: 1;
 } 
