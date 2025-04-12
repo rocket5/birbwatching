@@ -49,8 +49,8 @@ body {
 header {
   width: 100%;
   text-align: center;
-  padding: 1rem 0;
-  margin-bottom: 2rem;
+  /* padding: 1rem 0;
+  margin-bottom: 2rem; */
 }
 
 /* Bird 3D Model Container */
@@ -170,4 +170,14 @@ footer {
   .hero {
     padding: 1rem 0;
   }
+}
+
+.wave-divider {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  overflow: hidden;
 } 
