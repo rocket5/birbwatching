@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://rocket5.ca/birbwatching/sitemap.xml 

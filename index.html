@@ -3,28 +3,77 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <!-- Primary Meta Tags -->
   <title>Birb Watching | A Cozy Bird Watching Experience</title>
+  <meta name="title" content="Birb Watching | A Cozy Bird Watching Experience">
+  <meta name="description" content="Birb Watching is a cheeky VR experience that intertwines our contemporary obsessions with watching birds and consuming social media.">
+  <meta name="keywords" content="bird watching, VR experience, cozy games, birb watching, Cat Feraday Miller, Rocket 5 Studios, Ontario Arts Council">
+  <meta name="author" content="Cat Feraday Miller">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://rocket5.ca/birbwatching/">
+  
   <!-- Open Graph Meta Tags -->
-  <meta property="og:title" content="Birb Watching | A Cozy Bird Watching Experience">
-  <meta property="og:description" content="Birb Watching is a peaceful and gentle experience, allowing for relaxation and a gradual understanding of the relationships that can develop between bird and player.">
-  <meta property="og:image" content="https://rocket5.ca/birbwatching/assets/images/og-birbwatching.png">
-  <meta property="og:url" content="https://rocket5.ca/birbwatching/">
   <meta property="og:type" content="website">
+  <meta property="og:url" content="https://rocket5.ca/birbwatching/">
+  <meta property="og:title" content="Birb Watching | A Cozy Bird Watching Experience">
+  <meta property="og:description" content="Birb Watching is a cheeky VR experience that intertwines our contemporary obsessions with watching birds and consuming social media.">
+  <meta property="og:image" content="https://rocket5.ca/birbwatching/assets/images/og-birbwatching.png">
+  <meta property="og:site_name" content="Birb Watching">
+  <meta property="og:locale" content="en_US">
+  
   <!-- Twitter Card Tags -->
   <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://rocket5.ca/birbwatching/">
   <meta name="twitter:title" content="Birb Watching | A Cozy Bird Watching Experience">
-  <meta name="twitter:description" content="Birb Watching is a peaceful and gentle experience, allowing for relaxation and a gradual understanding of the relationships that can develop between bird and player.">
+  <meta name="twitter:description" content="Birb Watching is a cheeky VR experience that intertwines our contemporary obsessions with watching birds and consuming social media.">
   <meta name="twitter:image" content="https://rocket5.ca/birbwatching/assets/images/og-birbwatching.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="./assets/images/favicon.png">
+  <link rel="apple-touch-icon" href="./assets/images/apple-touch-icon.png">
+  
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+  
   <!-- Bootstrap CSS from CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  
   <!-- Plyr CSS -->
   <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
+  
   <!-- Custom styles -->
   <link rel="stylesheet" href="./src/css/main.css">
+
+  <!-- Structured Data -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "VideoGame",
+      "name": "Birb Watching",
+      "description": "A peaceful and gentle VR experience that allows players to observe and interact with whimsically imagined birds, created from needle-felted wool sculptures.",
+      "image": "https://rocket5.ca/birbwatching/assets/images/og-birbwatching.png",
+      "url": "https://rocket5.ca/birbwatching/",
+      "author": {
+        "@type": "Person",
+        "name": "Cat Feraday Miller"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Rocket 5 Studios",
+        "url": "https://rocket5.ca"
+      },
+      "genre": ["Virtual Reality", "Simulation", "Casual"],
+      "gamePlatform": ["Virtual Reality"],
+      "applicationCategory": "Game",
+      "offers": {
+        "@type": "Offer",
+        "availability": "https://schema.org/ComingSoon"
+      }
+    }
+  </script>
 </head>
 <body>
   <div class="container main-container">
@@ -80,7 +129,9 @@
             <div class="ratio ratio-16x9">
               <iframe 
                 src="https://www.youtube.com/embed/av1GXRum2Rg?si=Jt4kFl_pCvoOZ5Sg" 
-                title="Birb Watching Video" 
+                title="Birb Watching Video"
+                aria-label="Birb Watching gameplay video"
+                loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                 referrerpolicy="strict-origin-when-cross-origin" 
                 allowfullscreen>
@@ -98,7 +149,9 @@
                 <iframe 
                   style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
                   src="https://www.youtube.com/embed/ehKrxeP8jgY" 
-                  title="Birb Watching Short Video" 
+                  title="Birb Watching Short Video"
+                  aria-label="Short preview of Birb Watching gameplay"
+                  loading="lazy"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                   referrerpolicy="strict-origin-when-cross-origin" 
                   allowfullscreen>
@@ -114,7 +167,7 @@
           <div class="card-body">
             <p class="text-left">The artist gratefully acknowledges the support of the Ontario Arts Council, and technical artist/game developer collaborators Tim Miller and Corrie Shea-Pelletier, without whom this project could not have been made.</p>
             <div class="text-center">
-              <img src="./public/assets/images/OAC_Logo_black.png" alt="Ontario Arts Council Logo" class="img-fluid" style="max-width: 300px;">
+              <img src="./public/assets/images/OAC_Logo_black.png" alt="Ontario Arts Council Logo" class="img-fluid" style="max-width: 300px;" loading="lazy" width="300" height="auto" aria-label="Ontario Arts Council Logo">
             </div>
           </div>
         </div>
